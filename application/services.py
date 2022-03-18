@@ -138,14 +138,12 @@ class Chats:
         added_message = message.create_obj(MessagesChat)
         self.messages_chat_repo.send_message(added_message)
 
-    # не работает
     @join_point
     @validate_arguments
     def get_members_chat(self, chat_id: int, user_id: int) -> Optional[List[MembersChat]]:
         self.is_right_member(chat_id=chat_id, user_id=user_id)
         return self.members_chat_repo.get_chat_members(chat_id=chat_id)
 
-    # не работает
     @join_point
     @validate_arguments
     def get_messages_chat(self, chat_id: int, user_id: int) -> Optional[List[MessagesChat]]:
