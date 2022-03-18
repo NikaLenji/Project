@@ -38,3 +38,31 @@ class Chats:
     @join_point
     def on_post_add_chat(self, request: Request, response: Response):
         self.chats.add_chat(**request.media)
+
+    @join_point
+    def on_post_add_member(self, request: Request, response: Response):
+        self.chats.add_member(**request.media)
+
+    @join_point
+    def on_post_update_chat(self, request: Request, response: Response):
+        self.chats.update_chat(**request.media)
+
+    @join_point
+    def on_get_members_chat(self, request: Request, response: Response):
+        pass
+
+    @join_point
+    def on_post_send_message(self, request: Request, response: Response):
+        self.chats.send_message(**request.media)
+
+    @join_point
+    def on_get_messages_chat(self, request: Request, response: Response):
+        pass
+
+    @join_point
+    def on_post_leave_chat(self, request: Request, response: Response):
+        self.chats.leave_chat(**request.media)
+
+    @join_point
+    def on_delete_delete_chat(self, request: Request, response: Response):
+        self.chats.delete_chat(**request.params)

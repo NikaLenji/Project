@@ -44,10 +44,9 @@ class MessagesChatInfo(DTO):
 
 class ChatForChangeInfo(DTO):
     id_chat: int
-    name_user: str
-    description: str
-    author_of_chat: int
-    creation_date: datetime.datetime
+    name_chat: Optional[str]
+    description: Optional[str]
+    author_of_chat: Optional[int]
     update_date: datetime.datetime = datetime.datetime.now()
 
 
@@ -86,19 +85,17 @@ class Chats:
         member_chat = MembersChatInfo(id_chat=chat.id_chat, id_user=chat.author_of_chat).create_obj(MembersChat)
         self.members_chat_repo.add_user(member_chat)
 
-
     @join_point
     @validate_arguments
     def get_chat_by_id(self, chat_id: int, user_id: int) -> Chat:
-        test_id_user = self.members_chat_repo.get_right_member(chat_id=chat_id, user_id=user_id)
-        if test_id_user is None:
-            raise errors.NoMember(user_id=test_id_user)
+        test_user = self.members_chat_repo.get_right_member(chat_id=chat_id, user_id=user_id)
+        if test_user is None:
+            raise errors.NoMember(user_id=user_id)
+        received_chat = self.chats_repo.get_by_chat_id(chat_id=chat_id)
+        if received_chat is None:
+            raise errors.NoChat(chat_id=chat_id)
         else:
-            received_chat = self.chats_repo.get_by_chat_id(chat_id=chat_id)
-            if received_chat is None:
-                raise errors.NoChat
-            else:
-                return received_chat
+            return received_chat
 
     @join_point
     @validate_arguments()
@@ -110,7 +107,6 @@ class Chats:
             member_chat = MembersChatInfo(id_chat=chat_id, id_user=new_user_id).create_obj(MembersChat)
             self.members_chat_repo.add_user(member_chat)
 
-
     @join_point
     @validate_with_dto
     def update_chat(self, chat_info: ChatForChangeInfo):
@@ -118,11 +114,10 @@ class Chats:
         if chat is None:
             raise errors.NoChat(chat_id=chat_info.id_chat)
         else:
-            test_id_author = self.chats_repo.get_author_id(chat_id=chat_info.id_chat)
-            if test_id_author == chat.author_of_chat:
+            if chat_info.author_of_chat == chat.author_of_chat:
                 chat_info.populate_obj(chat)
             else:
-                raise errors.NoAuthor(user_id=test_id_author)
+                raise errors.NoAuthor(user_id=chat_info.author_of_chat)
 
     @join_point
     @validate_arguments
@@ -132,8 +127,11 @@ class Chats:
             raise errors.NoChat(chat_id=chat_id)
         else:
             test_id_author = self.chats_repo.get_author_id(chat_id=chat_id)
+            print(test_id_author)
             if test_id_author == user_id:
                 self.chats_repo.remove_chat(chat)
+                [self.session.delete(member) for member in self.session.query(MembersChat).\
+                    where(MembersChat.id_chat == chat_id)]
             else:
                 raise errors.NoAuthor(user_id=user_id)
 
