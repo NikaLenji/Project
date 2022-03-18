@@ -1,6 +1,5 @@
-from falcon import Request, Response
-
 from classic.components import component
+from falcon import Request, Response
 
 from adapters.chat_api.join_points import join_point
 from application import services
@@ -54,9 +53,11 @@ class Chats:
     @join_point
     def on_get_members_chat(self, request: Request, response: Response):
         members = self.chats.get_members_chat(**request.params)
-        response.media = [{
+        response.media = [
+            {
             'name_user': member.id_user
-        } for member in members]
+            } for member in members
+        ]
 
     @join_point
     def on_post_send_message(self, request: Request, response: Response):
