@@ -1,10 +1,10 @@
-from typing import List, Optional
 import datetime
+from typing import List, Optional
 
-from pydantic import validate_arguments
 from classic.app import DTO, validate_with_dto
 from classic.aspects import PointCut
 from classic.components import component
+from pydantic import validate_arguments
 
 from application import errors, interfaces
 from .dataclasses import User, Chat, MembersChat, MessagesChat
@@ -155,8 +155,10 @@ class Chats:
     @join_point
     @validate_with_dto
     def leave_chat(self, member: MembersChatInfo):
-        chat = self.is_no_chat(member.id_chat)
-        test_member = self.is_right_author(chat_id=member.id_chat, user_id=member.id_user)
+        chat = self.is_no_chat(chat_id=member.id_chat)
+        test_member = self.members_chat_repo.get_right_member(chat_id=member.id_chat, user_id=member.id_user)
+        if test_member is None:
+            raise errors.NoMember(user_id=member.id_user)
         if test_member.id_user == chat.author_of_chat:
             self.chats_repo.remove_chat(chat)
         self.members_chat_repo.leave_chat(test_member)

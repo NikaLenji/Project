@@ -55,7 +55,7 @@ class Chats:
     def on_get_members_chat(self, request: Request, response: Response):
         members = self.chats.get_members_chat(**request.params)
         response.media = [{
-            'name_user': member.id_user,
+            'name_user': member.id_user
         } for member in members]
 
     @join_point
@@ -63,11 +63,15 @@ class Chats:
         self.chats.send_message(**request.media)
         response.media = {'message': 'Message sended'}
 
-    # @join_point
-    # def on_get_messages_chat(self, request: Request, response: Response):
-    #     messages = self.chats.get_messages_chat(**request.params)
-    #     for i in len(messages):
-
+    @join_point
+    def on_get_messages_chat(self, request: Request, response: Response):
+        messages = self.chats.get_messages_chat(**request.params)
+        response.media = [
+            {
+                'id_user': message.id_user,
+                'text_message': message.text_message
+            } for message in messages
+        ]
 
     @join_point
     def on_post_leave_chat(self, request: Request, response: Response):

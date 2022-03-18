@@ -56,8 +56,7 @@ class MembersChatRepo(BaseRepository, interfaces.MembersChatRepo):
         return self.session.execute(query).scalars().one_or_none()
 
     def get_chat_members(self, chat_id: int) -> Optional[List[MembersChat]]:
-        return self.session.execute(select(MembersChat).where(MembersChat.id_chat == chat_id)).all()
-        # return self.session.execute(select(User).filter(User.id_user.in_(all_members)))
+        return self.session.execute(select(MembersChat).where(MembersChat.id_chat == chat_id)).scalars().all()
 
     def leave_chat(self, member: MembersChat):
         self.session.delete(member)
@@ -71,4 +70,4 @@ class MessagesChatRepo(BaseRepository, interfaces.MessagesChatRepo):
         self.session.commit()
 
     def get_chat_messages(self, chat_id: int) -> Optional[List[MessagesChat]]:
-        return self.session.execute(select(MessagesChat).where(MessagesChat.id_chat == chat_id)).all()
+        return self.session.execute(select(MessagesChat).where(MessagesChat.id_chat == chat_id)).scalars().all()
