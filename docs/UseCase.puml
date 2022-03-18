@@ -1,0 +1,53 @@
+@startuml
+
+left to right direction
+
+:Гость: as Guest
+:Пользователь: as User
+
+rectangle "Вход в систему" {
+    usecase "Регистрация" as register
+    usecase "Авторизация" as auth
+}
+
+Guest --> register
+Guest --> auth
+
+
+rectangle "Чат" {
+    :Создатель чата: as author
+    :Участник чата: as member
+    usecase "Создать чат" as create_chat
+    usecase "Получить информацию о чате" as get_info
+    usecase "Получить всех участников чата" as get_members
+    usecase "Отправить сообщение" as send_message
+    usecase "Получить все сообщения чата" as get_messages
+    usecase "Выйти из чата" as leave_chat
+
+    rectangle "Управление чатом" {
+        usecase "Добавить пользователя в чат" as invite
+        usecase "Удалить чат" as delete
+        usecase "Обновить информацию о чате" as update_chat
+    }
+}
+
+User --> create_chat
+
+auth --> User
+
+author -- member
+
+User -- member
+User -- author
+
+member --> get_info
+member --> get_members
+member --> get_messages
+member --> send_message
+member --> leave_chat
+
+author --> invite
+author --> delete
+author --> update_chat
+
+@enduml

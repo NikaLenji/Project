@@ -1,0 +1,8 @@
+README.md
+setup.cfg
+setup.py
+ProjectEvraz.egg-info/PKG-INFO
+ProjectEvraz.egg-info/SOURCES.txt
+ProjectEvraz.egg-info/dependency_links.txt
+ProjectEvraz.egg-info/requires.txt
+ProjectEvraz.egg-info/top_level.txt
