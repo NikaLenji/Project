@@ -1,10 +1,10 @@
-
+from wsgiref import simple_server
 
 from sqlalchemy import create_engine
 from classic.sql_storage import TransactionContext
+
 from adapters import database, chat_api
 from application import services
-from wsgiref import simple_server
 
 
 class Settings:

@@ -1,8 +1,7 @@
-
-
-import attr
 import datetime
 from typing import Optional
+
+import attr
 
 
 @attr.dataclass
@@ -16,7 +15,7 @@ class User:
 @attr.dataclass
 class Chat:
     author_of_chat: User
-    creation_date: datetime.datetime = datetime.datetime.now()
+    creation_date: datetime.datetime = None
     name_chat: Optional[str] = None
     description: Optional[str] = None
     update_date: datetime.datetime = None
@@ -27,8 +26,7 @@ class Chat:
 class MessagesChat:
     id_chat: Chat
     id_user: User
-    text_message: str
-    date_message: datetime.datetime = None
+    text_message: Optional[str]
 
 
 @attr.dataclass

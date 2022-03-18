@@ -1,16 +1,16 @@
-
+from typing import List, Optional
 
 from sqlalchemy import select
-from typing import List, Optional
 from classic.components import component
 from classic.sql_storage import BaseRepository
+
 from application import interfaces
 from application.dataclasses import User, Chat, MembersChat, MessagesChat
 
 
 @component
 class UserRepo(BaseRepository, interfaces.UserRepo):
-    def registry_user(self, user: User):
+    def add_user(self, user: User):
         self.session.add(user)
         self.session.flush()
 
@@ -31,8 +31,14 @@ class ChatRepo(BaseRepository, interfaces.ChatRepo):
         return self.session.execute(query).scalars().one_or_none()
 
     def remove_chat(self, chat: Chat):
+        members = self.session.query(MembersChat).where(MembersChat.id_chat == chat.id_chat).all()
+        print(members)
+        [self.session.delete(member) for member in self.session.query(MembersChat).where(
+            MembersChat.id_chat == chat.id_chat).all()]
+        self.session.commit()
+
         self.session.delete(chat)
-        self.session.flush()
+        self.session.commit()
 
     def get_author_id(self, chat_id: int) -> Optional[int]:
         return select(Chat.author_of_chat).where(Chat.id_chat == chat_id)
@@ -45,12 +51,13 @@ class MembersChatRepo(BaseRepository, interfaces.MembersChatRepo):
         self.session.flush()
 
     def get_right_member(self, chat_id: int, user_id: int) -> Optional[MembersChat]:
-        query = select(MembersChat).filter(MembersChat.id_chat == chat_id, MembersChat.id_user == user_id)
-        return self.session.execute(query)
+        # query = select(MembersChat).filter(MembersChat.id_chat == chat_id, MembersChat.id_user == user_id)
+        query = select(MembersChat).where(MembersChat.id_chat == chat_id, MembersChat.id_user == user_id)
+        return self.session.execute(query).scalars().one_or_none()
 
     def get_chat_members(self, chat_id: int) -> Optional[List[MembersChat]]:
-        all_members = self.session.execute(select(MembersChat).where(MembersChat.id_chat == chat_id))
-        return self.session.execute(select(User).filter(User.id_user.in_(all_members)))
+        return self.session.execute(select(MembersChat).where(MembersChat.id_chat == chat_id)).all()
+        # return self.session.execute(select(User).filter(User.id_user.in_(all_members)))
 
     def leave_chat(self, member: MembersChat):
         self.session.delete(member)
@@ -61,7 +68,7 @@ class MembersChatRepo(BaseRepository, interfaces.MembersChatRepo):
 class MessagesChatRepo(BaseRepository, interfaces.MessagesChatRepo):
     def send_message(self, message: MessagesChat):
         self.session.add(message)
-        self.session.flush()
+        self.session.commit()
 
     def get_chat_messages(self, chat_id: int) -> Optional[List[MessagesChat]]:
-        return self.session.execute(select(MessagesChat).where(MessagesChat.id_chat == chat_id))
+        return self.session.execute(select(MessagesChat).where(MessagesChat.id_chat == chat_id)).all()

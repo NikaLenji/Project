@@ -1,9 +1,9 @@
-
-
-from application import services
-from classic.components import component
-from adapters.chat_api.join_points import join_point
 from falcon import Request, Response
+
+from classic.components import component
+
+from adapters.chat_api.join_points import join_point
+from application import services
 
 
 @component
@@ -20,6 +20,7 @@ class Users:
     @join_point
     def on_post_add_user(self, request: Request, response: Response):
         self.users.add_user(**request.media)
+        response.media = {'message': 'User added'}
 
 
 @component
@@ -38,26 +39,35 @@ class Chats:
     @join_point
     def on_post_add_chat(self, request: Request, response: Response):
         self.chats.add_chat(**request.media)
+        response.media = {'message': 'Chat added'}
 
     @join_point
     def on_post_add_member(self, request: Request, response: Response):
         self.chats.add_member(**request.media)
+        response.media = {'message': 'Member in chat added'}
 
     @join_point
     def on_post_update_chat(self, request: Request, response: Response):
         self.chats.update_chat(**request.media)
+        response.media = {'message': 'Chat was updated'}
 
     @join_point
     def on_get_members_chat(self, request: Request, response: Response):
-        pass
+        members = self.chats.get_members_chat(**request.params)
+        response.media = [{
+            'name_user': member.id_user,
+        } for member in members]
 
     @join_point
     def on_post_send_message(self, request: Request, response: Response):
         self.chats.send_message(**request.media)
+        response.media = {'message': 'Message sended'}
 
-    @join_point
-    def on_get_messages_chat(self, request: Request, response: Response):
-        pass
+    # @join_point
+    # def on_get_messages_chat(self, request: Request, response: Response):
+    #     messages = self.chats.get_messages_chat(**request.params)
+    #     for i in len(messages):
+
 
     @join_point
     def on_post_leave_chat(self, request: Request, response: Response):

@@ -1,5 +1,3 @@
-
-
 import datetime
 
 from sqlalchemy import (Column,
@@ -10,6 +8,7 @@ from sqlalchemy import (Column,
                         Table,
                         DateTime,
                         BigInteger)
+
 
 metadata = MetaData()
 

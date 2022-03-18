@@ -1,5 +1,3 @@
-
-
 from classic.aspects import PointCut
 
 join_points = PointCut()

@@ -1,8 +1,7 @@
-
-
 from classic.http_api import App
+
 from application import services
-from adapters.chat_api import controllers
+from . import controllers
 
 
 def create_app(
