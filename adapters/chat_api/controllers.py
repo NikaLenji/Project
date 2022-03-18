@@ -37,9 +37,4 @@ class Chats:
 
     @join_point
     def on_post_add_chat(self, request: Request, response: Response):
-        print(request.media)
         self.chats.add_chat(**request.media)
-
-    # @join_point
-    # def on_post_add_member(self, request: Request, response: Response):
-    #     self.chats.
