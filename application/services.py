@@ -8,7 +8,7 @@ from classic.app import DTO, validate_with_dto
 from classic.aspects import PointCut
 from classic.components import component
 
-from application import interfaces
+from application import errors, interfaces
 from .dataclasses import User, Chat, MembersChat, MessagesChat
 
 join_points = PointCut()
@@ -66,7 +66,7 @@ class Users:
     def get_user(self, user_id: int) -> User:
         received_user = self.user_repo.get_by_user_id(user_id=user_id)
         if received_user is None:
-            raise Exception
+            raise errors.NoUser(user_id=user_id)
         return received_user
 
 
@@ -91,7 +91,7 @@ class Chats:
         # else:
         received_chat = self.chats_repo.get_by_chat_id(chat_id=chat_id)
         if received_chat is None:
-            raise Exception
+            raise errors.NoChat
         else:
             return received_chat
 
@@ -104,8 +104,10 @@ class Chats:
     def update_chat(self, chat_info: ChatForChangeInfo):
         chat = self.chats_repo.get_by_chat_id(chat_id=chat_info.id_chat)
         test_id_author = self.chats_repo.get_author_id(chat_id=chat_info.id_chat)
-        if test_id_author:
+        if test_id_author == chat.author_of_chat:
             chat_info.populate_obj(chat)
+        else:
+            raise errors.NoAuthor(user_id=test_id_author)
 
     @join_point
     @validate_arguments
@@ -114,6 +116,8 @@ class Chats:
         test_id_author = self.chats_repo.get_author_id(chat_id=chat_id)
         if test_id_author == user_id:
             self.chats_repo.remove_chat(chat)
+        else:
+            raise errors.NoAuthor(user_id=user_id)
 
     @join_point
     @validate_arguments
