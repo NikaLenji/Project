@@ -94,7 +94,6 @@ def test_add_member(service_chat):
     service_chat.members_chat_repo.add_user.assert_called()
 
 
-# работает только без проверки на автора
 def test_update_chat(service_chat):
     service_chat.update_chat(**data_chat_update)
     # service_chat.update_chat.assert_called_once()
