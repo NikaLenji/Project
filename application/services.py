@@ -25,7 +25,6 @@ class ChatInfo(DTO):
     name_chat: Optional[str]
     description: Optional[str]
     id_chat: Optional[int]
-    creation_date: datetime.datetime = datetime.datetime.utcnow()
 
 
 class MembersChatInfo(DTO):
@@ -44,7 +43,6 @@ class ChatForChangeInfo(DTO):
     name_chat: Optional[str]
     description: Optional[str]
     author_of_chat: Optional[int]
-    update_date: datetime.datetime = datetime.datetime.now()
 
 
 @component
@@ -78,10 +76,11 @@ class Chats:
             raise errors.NoMember(user_id=user_id)
         return test_user
 
-    def is_right_author(self, chat_id: int, user_id: int):
-        chat = self.is_no_chat(chat_id=chat_id)
+    def is_right_author(self, chat_id: int, user_id: int) -> bool:
+        chat = self.chats_repo.get_by_chat_id(chat_id=chat_id)
         if chat.author_of_chat != user_id:
             raise errors.NoAuthor(user_id=user_id)
+        return True
 
     def is_no_chat(self, chat_id: int) -> Chat:
         received_chat = self.chats_repo.get_by_chat_id(chat_id=chat_id)
@@ -89,26 +88,21 @@ class Chats:
             raise errors.NoChat(chat_id=chat_id)
         return received_chat
 
-    def is_no_member(self, chat_id: int, user_id: int):
-        test_user = self.members_chat_repo.get_right_member(chat_id=chat_id, user_id=user_id)
-        if test_user is None:
-            raise errors.NoMember(user_id=user_id)
-
     @join_point
     @validate_with_dto
     def add_chat(self, chat_info: ChatInfo):
         added_chat = chat_info.create_obj(Chat)
         self.chats_repo.add_chat(added_chat)
-
-        chat = self.chats_repo.get_by_chat_id(chat_id=added_chat.id_chat)
-        member_chat = MembersChatInfo(id_chat=chat.id_chat, id_user=chat.author_of_chat).create_obj(MembersChat)
+        member_chat = MembersChatInfo(
+            id_chat=added_chat.id_chat, id_user=added_chat.author_of_chat).create_obj(MembersChat)
         self.members_chat_repo.add_user(member_chat)
 
     @join_point
     @validate_arguments
     def get_chat_by_id(self, chat_id: int, user_id: int) -> Chat:
         self.is_right_member(chat_id=chat_id, user_id=user_id)
-        return self.is_no_chat(chat_id=chat_id)
+        received_chat = self.is_no_chat(chat_id=chat_id)
+        return received_chat
 
     @join_point
     @validate_arguments
@@ -120,8 +114,8 @@ class Chats:
     @join_point
     @validate_with_dto
     def update_chat(self, chat_info: ChatForChangeInfo):
-        chat = self.is_no_chat(chat_id=chat_info.id_chat)
         self.is_right_author(chat_id=chat_info.id_chat, user_id=chat_info.author_of_chat)
+        chat = self.is_no_chat(chat_id=chat_info.id_chat)
         chat_info.populate_obj(chat)
 
     @join_point

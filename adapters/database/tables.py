@@ -28,8 +28,6 @@ chats = Table(
     Column('name_chat', String(100), nullable=False),
     Column('description', String(500), nullable=False),
     Column('author_of_chat', Integer, ForeignKey('Users.id_user'), nullable=False),
-    Column('creation_date', DateTime, default=datetime.datetime.utcnow()),
-    Column('update_date', DateTime, default=None),
 )
 
 messages_chat = Table(

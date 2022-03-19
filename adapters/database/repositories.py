@@ -28,7 +28,8 @@ class ChatRepo(BaseRepository, interfaces.ChatRepo):
 
     def get_by_chat_id(self, chat_id: int) -> Optional[Chat]:
         query = select(Chat).where(Chat.id_chat == chat_id)
-        return self.session.execute(query).scalars().one_or_none()
+        result = self.session.execute(query).scalars().one_or_none()
+        return result
 
     def remove_chat(self, chat: Chat):
         members = self.session.query(MembersChat).where(MembersChat.id_chat == chat.id_chat).all()

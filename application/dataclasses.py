@@ -15,10 +15,8 @@ class User:
 @attr.dataclass
 class Chat:
     author_of_chat: User
-    creation_date: datetime.datetime = None
     name_chat: Optional[str] = None
     description: Optional[str] = None
-    update_date: datetime.datetime = None
     id_chat: Optional[int] = None
 
 
