@@ -32,7 +32,6 @@ class ChatRepo(BaseRepository, interfaces.ChatRepo):
 
     def remove_chat(self, chat: Chat):
         members = self.session.query(MembersChat).where(MembersChat.id_chat == chat.id_chat).all()
-        print(members)
         [self.session.delete(member) for member in self.session.query(MembersChat).where(
             MembersChat.id_chat == chat.id_chat).all()]
         self.session.commit()
