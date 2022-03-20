@@ -9,6 +9,7 @@ from application import services
 
 class Settings:
     db = database.Settings()
+    chat_api = chat_api.Settings()
 
 
 class DB:
@@ -33,6 +34,9 @@ class Application:
         messages_chat_repo=DB.messages_chat_repo,
     )
 
+    is_dev_mode = Settings.chat_api.IS_DEV_MODE
+    allow_origins = Settings.chat_api.ALLOW_ORIGINS
+
 
 class Aspects:
     services.join_points.join(DB.context)
@@ -40,6 +44,8 @@ class Aspects:
 
 
 app = chat_api.create_app(
+    is_dev_mode=Application.is_dev_mode,
+    allow_origins=Application.allow_origins,
     users=Application.users,
     chats=Application.chats,
 )

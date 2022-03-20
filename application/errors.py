@@ -1,9 +1,14 @@
 from classic.app.errors import AppError
 
 
+class UserAlreadyExist(AppError):
+    msg_template = "User with id '{user_id}' already exist"
+    code = 'user.no_user'
+
+
 class NoUser(AppError):
     msg_template = "User with id '{user_id}' does not exist"
-    code = 'user.no_chat'
+    code = 'user.no_user'
 
 
 class NoChat(AppError):

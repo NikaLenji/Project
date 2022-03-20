@@ -6,6 +6,9 @@ from application.dataclasses import User, Chat, MembersChat, MessagesChat
 
 class UserRepo(ABC):
     @abstractmethod
+    def check_user_login(self, user_login: str) -> bool: pass
+
+    @abstractmethod
     def add_user(self, user: User): pass
 
     @abstractmethod

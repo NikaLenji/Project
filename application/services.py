@@ -6,6 +6,7 @@ from classic.aspects import PointCut
 from classic.components import component
 from pydantic import validate_arguments
 
+import jwt
 from application import errors, interfaces
 from .dataclasses import User, Chat, MembersChat, MessagesChat
 
@@ -52,8 +53,22 @@ class Users:
     @join_point
     @validate_with_dto
     def add_user(self, user_info: UserInfo):
-        added_user = user_info.create_obj(User)
-        self.user_repo.add_user(added_user)
+        if self.user_repo.check_user_login(user_info.login):
+            raise errors.UserAlreadyExist()
+        else:
+            user = user_info.create_obj(User)
+            user = self.user_repo.add_user(user)
+            token = jwt.encode(
+                {
+                    "sub": user.id_user,
+                    "login": user.login,
+                    "name": user.name_user,
+                    "group": "User"
+                },
+                'this_is_secret_key_for_jwt',
+                algorithm="HS256"
+            )
+            return token
 
     @join_point
     @validate_arguments
