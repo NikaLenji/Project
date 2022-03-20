@@ -98,9 +98,11 @@ class Chats:
     def on_post_leave_chat(self, request: Request, response: Response):
         request.media['id_user'] = request.context.client.user_id
         self.chats.leave_chat(**request.media)
+        response.media = {'message': 'member left chat'}
 
     @join_point
     @authenticate
     def on_delete_delete_chat(self, request: Request, response: Response):
-        request.media['user_id'] = request.context.client.user_id
+        request.params['user_id'] = request.context.client.user_id
         self.chats.delete_chat(**request.params)
+        response.media = {'message': 'chat was deleted'}
