@@ -3,8 +3,7 @@ from falcon import Request, Response
 
 from adapters.chat_api.join_points import join_point
 from application import services
-from .auth import Groups, Permissions
-from classic.http_auth import (authenticate, authenticator_needed, authorize,)
+from classic.http_auth import (authenticate, authenticator_needed)
 
 
 @authenticator_needed
@@ -25,6 +24,7 @@ class Users:
     def on_post_add_user(self, request: Request, response: Response):
         token = self.users.add_user(**request.media)
         response.media = {'token': token}
+
 
 @authenticator_needed
 @component

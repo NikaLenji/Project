@@ -2,7 +2,7 @@ from classic.app.errors import AppError
 
 
 class UserAlreadyExist(AppError):
-    msg_template = "User with id '{user_id}' already exist"
+    msg_template = "User with id {user_id} already exist"
     code = 'user.no_user'
 
 

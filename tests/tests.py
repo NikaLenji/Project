@@ -1,7 +1,7 @@
 import pytest
 from attr import asdict
 
-from application import services
+from application import services, errors
 
 
 @pytest.fixture(scope='function')
@@ -67,8 +67,8 @@ get_members = {
 
 
 def test_add_user(service_user):
-    service_user.add_user(**data_user)
-    service_user.user_repo.add_user.assert_called_once()
+    with pytest.raises(errors.UserAlreadyExist):
+        service_user.add_user(**data_user)
 
 
 def test_get_user(service_user):

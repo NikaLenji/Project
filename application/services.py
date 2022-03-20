@@ -54,7 +54,7 @@ class Users:
     @validate_with_dto
     def add_user(self, user_info: UserInfo):
         if self.user_repo.check_user_login(user_info.login):
-            raise errors.UserAlreadyExist()
+            raise errors.UserAlreadyExist(user_id=user_info.id_user)
         else:
             user = user_info.create_obj(User)
             user = self.user_repo.add_user(user)
