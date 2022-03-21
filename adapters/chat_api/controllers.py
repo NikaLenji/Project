@@ -1,10 +1,11 @@
-from classic.components import component
 from falcon import Request, Response
 import jwt
 
+from classic.components import component
+from classic.http_auth import (authenticate, authenticator_needed)
+
 from adapters.chat_api.join_points import join_point
 from application import services
-from classic.http_auth import (authenticate, authenticator_needed)
 
 
 @authenticator_needed

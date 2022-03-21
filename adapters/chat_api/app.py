@@ -1,5 +1,4 @@
 from typing import Tuple, Union
-import falcon
 
 from classic.http_api import App
 from classic.http_auth import Authenticator

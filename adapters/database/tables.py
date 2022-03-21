@@ -1,12 +1,9 @@
-import datetime
-
 from sqlalchemy import (Column,
                         ForeignKey,
                         Integer,
                         MetaData,
                         String,
                         Table,
-                        DateTime,
                         BigInteger)
 
 
