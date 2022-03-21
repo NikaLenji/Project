@@ -1,4 +1,3 @@
-import datetime
 from typing import List, Optional
 
 from classic.app import DTO, validate_with_dto
@@ -6,7 +5,6 @@ from classic.aspects import PointCut
 from classic.components import component
 from pydantic import validate_arguments
 
-import jwt
 from application import errors, interfaces
 from .dataclasses import User, Chat, MembersChat, MessagesChat
 
@@ -55,20 +53,19 @@ class Users:
     def add_user(self, user_info: UserInfo):
         if self.user_repo.check_user_login(user_info.login):
             raise errors.UserAlreadyExist(user_id=user_info.id_user)
-        else:
-            user = user_info.create_obj(User)
-            user = self.user_repo.add_user(user)
-            token = jwt.encode(
-                {
-                    "sub": user.id_user,
-                    "login": user.login,
-                    "name": user.name_user,
-                    "group": "User"
-                },
-                'this_is_secret_key_for_jwt',
-                algorithm="HS256"
-            )
-            return token
+        user = user_info.create_obj(User)
+        user = self.user_repo.add_user(user)
+        return user
+
+    @join_point
+    @validate_arguments
+    def login(self, user_login: str, user_password: str):
+        user = self.user_repo.check_user_login(user_login=user_login)
+        if user is None:
+            raise errors.NoUser(user_id=user_login)
+        if user.password != user_password:
+            raise errors.WrongPassword()
+        return user
 
     @join_point
     @validate_arguments

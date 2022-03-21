@@ -6,6 +6,11 @@ class UserAlreadyExist(AppError):
     code = 'user.no_user'
 
 
+class WrongPassword(AppError):
+    msg_template = "Wrong password"
+    code = 'user.no_user'
+
+
 class NoUser(AppError):
     msg_template = "User with id '{user_id}' does not exist"
     code = 'user.no_user'

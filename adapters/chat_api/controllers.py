@@ -1,5 +1,6 @@
 from classic.components import component
 from falcon import Request, Response
+import jwt
 
 from adapters.chat_api.join_points import join_point
 from application import services
@@ -22,7 +23,22 @@ class Users:
 
     @join_point
     def on_post_add_user(self, request: Request, response: Response):
-        token = self.users.add_user(**request.media)
+        user = self.users.add_user(**request.media)
+        response.media = {'message': 'User added'}
+
+    @join_point
+    def on_post_login(self, request: Request, response: Response):
+        user = self.users.login(**request.params)
+        token = jwt.encode(
+            {
+                "sub": user.id_user,
+                "login": user.login,
+                "name": user.name_user,
+                "group": "User"
+            },
+            'this_is_secret_key_for_jwt',
+            algorithm="HS256"
+        )
         response.media = {'token': token}
 
 

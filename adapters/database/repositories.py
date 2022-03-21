@@ -10,11 +10,10 @@ from application.dataclasses import User, Chat, MembersChat, MessagesChat
 
 @component
 class UserRepo(BaseRepository, interfaces.UserRepo):
-    def check_user_login(self, user_login: str) -> bool:
+    def check_user_login(self, user_login: str) -> Optional[User]:
         query = select(User).where(User.login == user_login)
-        if self.session.execute(query).scalars().one_or_none():
-            return True
-        return False
+        result = self.session.execute(query).scalars().one_or_none()
+        return result
 
     def add_user(self, user: User):
         self.session.add(user)
