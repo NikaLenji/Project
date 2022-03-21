@@ -70,7 +70,7 @@ class Chats:
         members = self.chats.get_members_chat(**request.params)
         response.media = [
             {
-            'name_user': member.id_user
+            'id_user': member.id_user
             } for member in members
         ]
 
